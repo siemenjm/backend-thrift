@@ -12,6 +12,7 @@ app.use(express.json());
 app.use(cors());
 
 // Routers -----
+app.use('/users', controllers.users);
 app.use('/institutions', controllers.institutions);
 
 // Listener -----
