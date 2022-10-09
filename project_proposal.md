@@ -17,9 +17,9 @@ As a user, I want to be able to:
 * Connect to Plaid API to auto-update transactions
 
 ## Wireframe
-![Mobile View]()
+![Mobile View](https://github.com/siemenjm/backend-thrift/blob/main/proposal_screenshots/mobile_view.png)
 
-![Desktop View]()
+![Desktop View](https://github.com/siemenjm/backend-thrift/blob/main/proposal_screenshots/desktop_view.png)
 
 ## ERD
-![Desktop View]()
+![Model ERDs](https://github.com/siemenjm/backend-thrift/blob/main/proposal_screenshots/model_erds.png)
