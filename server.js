@@ -15,7 +15,7 @@ app.use(cors());
 // Routes -----
 app.get('/institutions', async (req, res) => {
     try {
-        const allInstitutions = await pool.query('SELECT * FROM institution');
+        const allInstitutions = await pool.query('SELECT * FROM institutions');
 
         res.json(allInstitutions.rows);
     } catch (error) {
@@ -26,7 +26,7 @@ app.get('/institutions', async (req, res) => {
 app.get('/institutions/:insId', async (req, res) => {
     try {
         const { insId } = req.params;
-        const thisInstitution = await pool.query('SELECT * FROM institution WHERE ins_id = $1', [insId]);
+        const thisInstitution = await pool.query('SELECT * FROM institutions WHERE ins_id = $1', [insId]);
 
         res.json(thisInstitution.rows[0]);
     } catch (error) {
@@ -37,7 +37,7 @@ app.get('/institutions/:insId', async (req, res) => {
 app.post('/institutions', async (req, res) => {
     try {
         const { name, logo } = req.body;
-        const newInstitution = await pool.query('INSERT INTO institution (name, logo) VALUES ($1, $2) RETURNING *', [name, logo]);
+        const newInstitution = await pool.query('INSERT INTO institutions (name, logo) VALUES ($1, $2) RETURNING *', [name, logo]);
 
         res.json(newInstitution.rows[0]);
     } catch (error) {
@@ -49,7 +49,7 @@ app.put('/institutions/:insId', async (req, res) => {
     try {
         const { insId } = req.params;
         const { name, logo } = req.body;
-        const updateInstitution = await pool.query('UPDATE institution SET name = $1, logo = $2 WHERE ins_id = $3', [name, logo, insId]);
+        const updateInstitution = await pool.query('UPDATE institutions SET name = $1, logo = $2 WHERE ins_id = $3', [name, logo, insId]);
 
         res.json(`Institution with ins_id = ${insId} was updated`);
     } catch (error) {
@@ -60,7 +60,7 @@ app.put('/institutions/:insId', async (req, res) => {
 app.delete('/institutions/:insId', async (req, res) => {
     try {
         const { insId } = req.params;
-        const deleteInstitution = await pool.query('DELETE FROM institution WHERE ins_id = $1', [insId]);
+        const deleteInstitution = await pool.query('DELETE FROM institutions WHERE ins_id = $1', [insId]);
 
         res.json(`Institution with ins_id = ${insId} was deleted`);
     } catch (error) {
