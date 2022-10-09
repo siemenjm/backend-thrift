@@ -23,6 +23,17 @@ app.get('/institutions', async (req, res) => {
     }
 });
 
+app.get('/institutions/:insId', async (req, res) => {
+    try {
+        const { insId } = req.params;
+        const thisInstitution = await pool.query('SELECT * FROM institution WHERE ins_id = $1', [insId]);
+
+        res.json(thisInstitution.rows[0]);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
 app.post('/institutions', async (req, res) => {
     try {
         const { name, logo } = req.body;
