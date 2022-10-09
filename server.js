@@ -13,6 +13,16 @@ app.use(express.json());
 app.use(cors());
 
 // Routes -----
+app.get('/institutions', async (req, res) => {
+    try {
+        const allInstitutions = await pool.query('SELECT * FROM institution');
+
+        res.json(allInstitutions.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
 app.post('/institutions', async (req, res) => {
     try {
         const { name, logo } = req.body;
@@ -24,6 +34,7 @@ app.post('/institutions', async (req, res) => {
     }
 });
 
+// Listener -----
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 })
