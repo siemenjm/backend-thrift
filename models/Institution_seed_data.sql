@@ -29,7 +29,7 @@ INSERT INTO institutions (
     1
 );
 
--- Rachel institutions (user_id = 1) -----
+-- Rachel institutions (user_id = 2) -----
 INSERT INTO institutions (
     name,
     logo,
@@ -50,7 +50,7 @@ INSERT INTO institutions (
     2
 );
 
--- Isaac institutions (user_id = 1) -----
+-- Isaac institutions (user_id = 3) -----
 INSERT INTO institutions (
     name,
     logo,
