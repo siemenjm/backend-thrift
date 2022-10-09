@@ -45,6 +45,18 @@ app.post('/institutions', async (req, res) => {
     }
 });
 
+app.put('/institutions/:insId', async (req, res) => {
+    try {
+        const { insId } = req.params;
+        const { name, logo } = req.body;
+        const updatedInstitution = await pool.query('UPDATE institution SET name = $1, logo = $2 WHERE ins_id = $3', [name, logo, insId]);
+
+        res.json(`Institution with ins_id = ${insId} was updated`);
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
 // Listener -----
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
