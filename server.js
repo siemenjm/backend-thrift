@@ -4,12 +4,15 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const morgan = require('morgan');
+
 const controllers = require('./controllers');
 const { PORT } = process.env;
 
 // Middleware -----
 app.use(express.json());
 app.use(cors());
+app.use(morgan('dev'));
 
 // Routers -----
 app.use('/users', controllers.users);
