@@ -15,6 +15,7 @@ app.use(cors());
 app.use('/users', controllers.users);
 app.use('/institutions', controllers.institutions);
 app.use('/accounts', controllers.accounts);
+app.use('/transactions', controllers.transactions);
 
 // Listener -----
 app.listen(PORT, () => {

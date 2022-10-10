@@ -63,7 +63,7 @@ INSERT INTO accounts (
     1
 );
 
--- Rachel accounts (user_id = 1) -----
+-- Rachel accounts (user_id = 2) -----
 INSERT INTO accounts (
     name,
     starting_balance,
@@ -96,7 +96,7 @@ INSERT INTO accounts (
     2
 );
 
--- Isaac accounts (user_id = 1) -----
+-- Isaac accounts (user_id = 3) -----
 INSERT INTO accounts (
     name,
     starting_balance,
