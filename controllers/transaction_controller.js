@@ -85,6 +85,8 @@ router.put('/:transId', async (req, res) => {
             credited_account_id,
             debited_account_id,
             user_id } = req.body;
+        
+        // Update transaction
         const updateTransaction = await pool.query('UPDATE transactions SET date = $1, description = $2, amount = $3, trans_type = $4, category = $5, sub_category = $6, credited_account_id = $7, debited_account_id = $8, user_id = $9 WHERE trans_id = $10', [
             date,
             description,
@@ -97,6 +99,16 @@ router.put('/:transId', async (req, res) => {
             user_id,
             transId
         ]);
+
+        // Update Account balance and Institution balance
+        if (credited_account_id) {
+            updateAccountBalance(credited_account_id);
+            updateInstitutionBalance(credited_account_id);
+        }
+        if (debited_account_id) {
+            updateAccountBalance(debited_account_id);
+            updateInstitutionBalance(debited_account_id);
+        }
 
         res.json(`Transaction with trans_id = ${transId} was updated`);
     } catch (error) {
