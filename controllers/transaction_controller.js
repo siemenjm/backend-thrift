@@ -1,5 +1,7 @@
 // Dependencies -----
 const express = require('express');
+const updateAccountBalance = require('../api_functions/update_account_data');
+const updateInstitutionBalance = require('../api_functions/update_institution_data');
 const router = express.Router();
 const pool = require('../config/db_config');
 
@@ -56,25 +58,12 @@ router.post('/', async (req, res) => {
 
         // Update Account balance and Institution balance
         if (credited_account_id) {
-            const accountCredits = await pool.query('SELECT SUM(amount) FROM transactions WHERE credited_account_id = $1', [credited_account_id]);
-            const accountDebits = await pool.query('SELECT SUM(amount) FROM transactions WHERE debited_account_id = $1', [credited_account_id]);
-            const accountBalance = accountDebits.rows[0].sum - accountCredits.rows[0].sum;
-            const updateAccount = await pool.query('UPDATE accounts SET current_balance = $1 WHERE account_id = $2', [accountBalance, credited_account_id]);
-
-            // get all accounts assoc with inst and sum balances, update inst
-            const institutionID = await pool.query('SELECT ins_id FROM accounts WHERE account_id = $1', [credited_account_id]);
-            const institutionBalance = await pool.query('SELECT SUM(current_balance) FROM accounts WHERE ins_id = $1', [institutionID.rows[0].ins_id]);
-            const updateInstitution = await pool.query('UPDATE institutions SET current_balance = $1 WHERE ins_id = $2', [institutionBalance.rows[0].sum, institutionID.rows[0].ins_id]);
+            updateAccountBalance(credited_account_id);
+            updateInstitutionBalance(credited_account_id);
         }
         if (debited_account_id) {
-            const accountCredits = await pool.query('SELECT SUM(amount) FROM transactions WHERE credited_account_id = $1', [debited_account_id]);
-            const accountDebits = await pool.query('SELECT SUM(amount) FROM transactions WHERE debited_account_id = $1', [debited_account_id]);
-            const accountBalance = accountDebits.rows[0].sum - accountCredits.rows[0].sum;
-            const updateAccount = await pool.query('UPDATE accounts SET current_balance = $1 WHERE account_id = $2', [accountBalance, debited_account_id]);
-
-            const institutionID = await pool.query('SELECT ins_id FROM accounts WHERE account_id = $1', [debited_account_id]);
-            const institutionBalance = await pool.query('SELECT SUM(current_balance) FROM accounts WHERE ins_id = $1', [institutionID.rows[0].ins_id]);
-            const updateInstitution = await pool.query('UPDATE institutions SET current_balance = $1 WHERE ins_id = $2', [institutionBalance.rows[0].sum, institutionID.rows[0].ins_id]);
+            updateAccountBalance(debited_account_id);
+            updateInstitutionBalance(debited_account_id);
         }
 
         res.json(newTransaction.rows[0]);
