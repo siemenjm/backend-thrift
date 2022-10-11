@@ -40,6 +40,8 @@ router.post('/', async (req, res) => {
             credited_account_id,
             debited_account_id,
             user_id } = req.body;
+
+        // Create new transaction
         const newTransaction = await pool.query('INSERT INTO transactions (date, description, amount, trans_type, category, sub_category, credited_account_id, debited_account_id, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *', [
             date,
             description,
@@ -51,6 +53,22 @@ router.post('/', async (req, res) => {
             debited_account_id,
             user_id
         ]);
+
+        // Update Account balance
+        // if (credited_account_id) {
+        //     const updateAccount = await pool.query('UPDATE accounts SET current_balance = current_balance - $1 WHERE account_id = $2', [amount, credited_account_id]);
+        // }
+        // if (debited_account_id) {
+        //     const updateAccount = await pool.query('UPDATE accounts SET current_balance = current_balance + $1 WHERE account_id = $2', [amount, debited_account_id]);
+        // }
+        if (credited_account_id) {
+            const accountBalance = await pool.query('SELECT SUM(amount) FROM transactions WHERE credited_account_id = $1', [credited_account_id]);
+            const updateAccount = await pool.query('UPDATE accounts SET current_balance = $1 WHERE account_id = $2', [accountBalance, credited_account_id]);
+        }
+        if (debited_account_id) {
+            const accountBalance = await pool.query('SELECT SUM(amount) FROM transactions WHERE debited_account_id = $1', [debited_account_id]);
+            const updateAccount = await pool.query('UPDATE accounts SET current_balance = $1 WHERE account_id = $2', [accountBalance, debited_account_id]);
+        }
 
         res.json(newTransaction.rows[0]);
     } catch (error) {

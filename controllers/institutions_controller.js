@@ -30,8 +30,8 @@ router.get('/:insId', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const { name, logo } = req.body;
-        const newInstitution = await pool.query('INSERT INTO institutions (name, logo) VALUES ($1, $2) RETURNING *', [name, logo]);
+        const { name, logo, user_id } = req.body;
+        const newInstitution = await pool.query('INSERT INTO institutions (name, logo, user_id) VALUES ($1, $2, $3) RETURNING *', [name, logo, user_id]);
 
         res.json(newInstitution.rows[0]);
     } catch (error) {
@@ -42,8 +42,8 @@ router.post('/', async (req, res) => {
 router.put('/:insId', async (req, res) => {
     try {
         const { insId } = req.params;
-        const { name, logo } = req.body;
-        const updateInstitution = await pool.query('UPDATE institutions SET name = $1, logo = $2 WHERE ins_id = $3', [name, logo, insId]);
+        const { name, logo, user_id } = req.body;
+        const updateInstitution = await pool.query('UPDATE institutions SET name = $1, logo = $2, user_id = $3 WHERE ins_id = $4', [name, logo, user_id, insId]);
 
         res.json(`Institution with ins_id = ${insId} was updated`);
     } catch (error) {
