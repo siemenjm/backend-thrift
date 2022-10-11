@@ -1,8 +1,8 @@
 CREATE TABLE transactions (
     trans_id SERIAL PRIMARY KEY,
     date DATE NOT NULL,
-    description VARCHAR(255) NOT NULL,
-    amount DECIMAL (11, 2) NOT NULL,
+    description VARCHAR(255) DEFAULT '',
+    amount DECIMAL (11, 2) DEFAULT 0,
     trans_type VARCHAR(255) NOT NULL,
     category VARCHAR(255) NOT NULL,
     sub_category VARCHAR(255),

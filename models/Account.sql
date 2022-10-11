@@ -1,8 +1,8 @@
 CREATE TABLE accounts (
     account_id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    starting_balance DECIMAL (11, 2) NOT NULL,
-    current_balance DECIMAL (11, 2),
+    starting_balance DECIMAL (11, 2) DEFAULT 0,
+    current_balance DECIMAL (11, 2) DEFAULT 0,
     account_type VARCHAR(255) NOT NULL,
     ins_id INT NOT NULL,
     user_id INT NOT NULL,
