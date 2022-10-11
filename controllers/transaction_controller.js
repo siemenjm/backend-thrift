@@ -55,18 +55,16 @@ router.post('/', async (req, res) => {
         ]);
 
         // Update Account balance
-        // if (credited_account_id) {
-        //     const updateAccount = await pool.query('UPDATE accounts SET current_balance = current_balance - $1 WHERE account_id = $2', [amount, credited_account_id]);
-        // }
-        // if (debited_account_id) {
-        //     const updateAccount = await pool.query('UPDATE accounts SET current_balance = current_balance + $1 WHERE account_id = $2', [amount, debited_account_id]);
-        // }
         if (credited_account_id) {
-            const accountBalance = await pool.query('SELECT SUM(amount) FROM transactions WHERE credited_account_id = $1', [credited_account_id]);
+            const accountCredits = await pool.query('SELECT SUM(amount) FROM transactions WHERE credited_account_id = $1', [credited_account_id]);
+            const accountDebits = await pool.query('SELECT SUM(amount) FROM transactions WHERE debited_account_id = $1', [credited_account_id]);
+            const accountBalance = accountDebits.rows[0].sum - accountCredits.rows[0].sum;
             const updateAccount = await pool.query('UPDATE accounts SET current_balance = $1 WHERE account_id = $2', [accountBalance, credited_account_id]);
         }
         if (debited_account_id) {
-            const accountBalance = await pool.query('SELECT SUM(amount) FROM transactions WHERE debited_account_id = $1', [debited_account_id]);
+            const accountCredits = await pool.query('SELECT SUM(amount) FROM transactions WHERE credited_account_id = $1', [debited_account_id]);
+            const accountDebits = await pool.query('SELECT SUM(amount) FROM transactions WHERE debited_account_id = $1', [debited_account_id]);
+            const accountBalance = accountDebits.rows[0].sum - accountCredits.rows[0].sum;
             const updateAccount = await pool.query('UPDATE accounts SET current_balance = $1 WHERE account_id = $2', [accountBalance, debited_account_id]);
         }
 
