@@ -30,8 +30,8 @@ router.get('/:accountId', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const { name, starting_balance, current_balance, account_type, ins_id, user_id } = req.body;
-        const newAccount = await pool.query('INSERT INTO accounts (name, starting_balance, current_balance, account_type, ins_id, user_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [name, starting_balance, current_balance, account_type, ins_id, user_id]);
+        const { name, startingBalance, currentBalance, accountType, insId, userId } = req.body;
+        const newAccount = await pool.query('INSERT INTO accounts (name, starting_balance, current_balance, account_type, ins_id, user_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [name, startingBalance, currentBalance, accountType, insId, userId]);
 
         res.json(newAccount.rows[0]);
     } catch (error) {
@@ -42,8 +42,8 @@ router.post('/', async (req, res) => {
 router.put('/:accountId', async (req, res) => {
     try {
         const { accountId } = req.params;
-        const { name, starting_balance, current_balance, account_type, ins_id, user_id } = req.body;
-        const updateAccount = await pool.query('UPDATE accounts SET name = $1, starting_balance = $2, current_balance = $3, account_type = $4, ins_id = $5, user_id = $6 WHERE account_id = $7', [name, starting_balance, current_balance, account_type, ins_id, user_id, accountId]);
+        const { name, startingBalance, currentBalance, accountType, insId, userId } = req.body;
+        const updateAccount = await pool.query('UPDATE accounts SET name = $1, starting_balance = $2, current_balance = $3, account_type = $4, ins_id = $5, user_id = $6 WHERE account_id = $7', [name, startingBalance, currentBalance, accountType, insId, userId, accountId]);
 
         res.json(`Account with account_id = ${accountId} was updated`);
     } catch (error) {
