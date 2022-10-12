@@ -61,6 +61,7 @@ router.post('/', async (req, res) => {
             updateAccountBalance(credited_account_id);
             updateInstitutionBalance(credited_account_id);
         }
+
         if (debited_account_id) {
             updateAccountBalance(debited_account_id);
             updateInstitutionBalance(debited_account_id);
@@ -105,6 +106,7 @@ router.put('/:transId', async (req, res) => {
             updateAccountBalance(credited_account_id);
             updateInstitutionBalance(credited_account_id);
         }
+
         if (debited_account_id) {
             updateAccountBalance(debited_account_id);
             updateInstitutionBalance(debited_account_id);
@@ -119,6 +121,23 @@ router.put('/:transId', async (req, res) => {
 router.delete('/:transId', async (req, res) => {
     try {
         const { transId } = req.params;
+        
+        const creditedAccountIdData = await pool.query('SELECT (credited_account_id) FROM transactions WHERE trans_id = $1', [transId]);
+        const creditedAccountId = creditedAccountIdData.rows[0].credited_account_id;
+        const debitedAccountIdData = await pool.query('SELECT (debited_account_id) FROM transactions WHERE trans_id = $1', [transId]);
+        const debitedAccountId = debitedAccountIdData.rows[0].debited_account_id;
+
+        // Update Account balance and Institution balance
+        if (creditedAccountId) {
+            updateAccountBalance(creditedAccountId);
+            updateInstitutionBalance(creditedAccountId);
+        }
+        
+        if (debitedAccountId) {
+            updateAccountBalance(debitedAccountId);
+            updateInstitutionBalance(debitedAccountId);
+        }
+                
         const deleteTransaction = await pool.query('DELETE FROM transactions WHERE trans_id = $1', [transId]);
 
         res.json(`Transaction with trans_id = ${transId} was deleted`);
