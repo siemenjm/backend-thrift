@@ -90,8 +90,6 @@ router.delete('/:accountId', async (req, res) => {
                 condensedDebitedAccountIds.push(debitedAccountIds[i]);
             }
         }
-        console.log(condensedCreditedAccountIds);
-        console.log(condensedDebitedAccountIds);
 
         const deleteAccount = await pool.query('DELETE FROM accounts WHERE account_id = $1', [accountId]);
 
