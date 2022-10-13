@@ -1,5 +1,7 @@
 // Dependencies -----
 const express = require('express');
+const updateAccountBalance = require('../api_functions/update_account_data');
+const updateInstitutionBalance = require('../api_functions/update_institution_data');
 const router = express.Router();
 const pool = require('../config/db_config');
 
@@ -32,6 +34,10 @@ router.post('/', async (req, res) => {
     try {
         const { name, startingBalance, accountType, insId, userId } = req.body;
         const newAccount = await pool.query('INSERT INTO accounts (name, starting_balance, account_type, ins_id, user_id) VALUES ($1, $2, $3, $4, $5) RETURNING *', [name, startingBalance, accountType, insId, userId]);
+
+        // Update Account current_balance and Institution balance to include starting_balance before responding
+        updateAccountBalance(newAccount.rows[0].account_id);
+        updateInstitutionBalance(newAccount.rows[0].account_id);
 
         res.json(newAccount.rows[0]);
     } catch (error) {
