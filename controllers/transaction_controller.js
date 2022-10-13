@@ -58,13 +58,13 @@ router.post('/', async (req, res) => {
 
         // Update Account balance and Institution balance
         if (creditedAccountId) {
-            updateAccountBalance(creditedAccountId);
-            updateInstitutionBalance(creditedAccountId);
+            await updateAccountBalance(creditedAccountId);
+            await updateInstitutionBalance(creditedAccountId);
         }
 
         if (debitedAccountId) {
-            updateAccountBalance(debitedAccountId);
-            updateInstitutionBalance(debitedAccountId);
+            await updateAccountBalance(debitedAccountId);
+            await updateInstitutionBalance(debitedAccountId);
         }
 
         res.json(newTransaction.rows[0]);
@@ -103,13 +103,13 @@ router.put('/:transId', async (req, res) => {
 
         // Update Account balance and Institution balance
         if (creditedAccountId) {
-            updateAccountBalance(creditedAccountId);
-            updateInstitutionBalance(creditedAccountId);
+            await updateAccountBalance(creditedAccountId);
+            await updateInstitutionBalance(creditedAccountId);
         }
 
         if (debitedAccountId) {
-            updateAccountBalance(debitedAccountId);
-            updateInstitutionBalance(debitedAccountId);
+            await updateAccountBalance(debitedAccountId);
+            await updateInstitutionBalance(debitedAccountId);
         }
 
         res.json(`Transaction with trans_id = ${transId} was updated`);
@@ -128,16 +128,16 @@ router.delete('/:transId', async (req, res) => {
         const debitedAccountId = debitedAccountIdData.rows[0].debited_account_id;
 
         const deleteTransaction = await pool.query('DELETE FROM transactions WHERE trans_id = $1', [transId]);
-        
+
         // Update Account balance and Institution balance
         if (creditedAccountId) {
-            updateAccountBalance(creditedAccountId);
-            updateInstitutionBalance(creditedAccountId);
+            await updateAccountBalance(creditedAccountId);
+            await updateInstitutionBalance(creditedAccountId);
         }
         
         if (debitedAccountId) {
-            updateAccountBalance(debitedAccountId);
-            updateInstitutionBalance(debitedAccountId);
+            await updateAccountBalance(debitedAccountId);
+            await updateInstitutionBalance(debitedAccountId);
         }
 
         
