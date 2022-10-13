@@ -6,6 +6,6 @@ CREATE TABLE accounts (
     account_type VARCHAR(255) NOT NULL,
     ins_id INT NOT NULL,
     user_id INT NOT NULL,
-    FOREIGN KEY (ins_id) REFERENCES institutions (ins_id),
+    FOREIGN KEY (ins_id) REFERENCES institutions (ins_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
