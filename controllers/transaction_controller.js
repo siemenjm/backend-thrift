@@ -121,12 +121,14 @@ router.put('/:transId', async (req, res) => {
 router.delete('/:transId', async (req, res) => {
     try {
         const { transId } = req.params;
-        
+
         const creditedAccountIdData = await pool.query('SELECT (credited_account_id) FROM transactions WHERE trans_id = $1', [transId]);
         const creditedAccountId = creditedAccountIdData.rows[0].credited_account_id;
         const debitedAccountIdData = await pool.query('SELECT (debited_account_id) FROM transactions WHERE trans_id = $1', [transId]);
         const debitedAccountId = debitedAccountIdData.rows[0].debited_account_id;
 
+        const deleteTransaction = await pool.query('DELETE FROM transactions WHERE trans_id = $1', [transId]);
+        
         // Update Account balance and Institution balance
         if (creditedAccountId) {
             updateAccountBalance(creditedAccountId);
@@ -137,9 +139,9 @@ router.delete('/:transId', async (req, res) => {
             updateAccountBalance(debitedAccountId);
             updateInstitutionBalance(debitedAccountId);
         }
-                
-        const deleteTransaction = await pool.query('DELETE FROM transactions WHERE trans_id = $1', [transId]);
 
+        
+                
         res.json(`Transaction with trans_id = ${transId} was deleted`);
     } catch (error) {
         console.error(error.message);
