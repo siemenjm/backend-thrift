@@ -9,10 +9,6 @@ async function updateAccountBalance(accountId) {
     const accountCredits = parseFloat(accountCreditsData.rows[0].sum) || 0;
     const accountDebits = parseFloat(accountDebitsData.rows[0].sum) || 0;
 
-    console.log(startingAccountBalance)
-    console.log(accountCredits)
-    console.log(accountDebits)
-
     const accountBalance = startingAccountBalance + accountDebits - accountCredits;
     const updateAccount = await pool.query('UPDATE accounts SET current_balance = $1 WHERE account_id = $2', [accountBalance, accountId]);
 }
