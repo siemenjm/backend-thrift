@@ -66,6 +66,9 @@ router.delete('/:accountId', async (req, res) => {
         const { accountId } = req.params;
         const deleteAccount = await pool.query('DELETE FROM accounts WHERE account_id = $1', [accountId]);
 
+        // Update Institution balance after deleting account
+        updateInstitutionBalance(accountId);
+
         res.json(`Account with account_id = ${accountId} was deleted`);
     } catch (error) {
         console.error(error.message);
