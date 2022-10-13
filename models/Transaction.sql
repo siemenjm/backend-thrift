@@ -9,7 +9,7 @@ CREATE TABLE transactions (
     credited_account_id INT,
     debited_account_id INT,
     user_id INT NOT NULL,
-    FOREIGN KEY (credited_account_id) REFERENCES accounts (account_id),
-    FOREIGN KEY (debited_account_id) REFERENCES accounts (account_id),
+    FOREIGN KEY (credited_account_id) REFERENCES accounts (account_id) ON DELETE CASCADE,
+    FOREIGN KEY (debited_account_id) REFERENCES accounts (account_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users (user_id)
 );

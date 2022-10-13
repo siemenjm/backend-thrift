@@ -4,5 +4,5 @@ CREATE TABLE institutions (
     logo VARCHAR(250) DEFAULT '',
     current_balance DECIMAL (11, 2) DEFAULT 0,
     user_id INT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users (user_id)
+    FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
