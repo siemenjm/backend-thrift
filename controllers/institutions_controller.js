@@ -1,5 +1,7 @@
 // Dependencies -----
 const express = require('express');
+const updateAccountBalance = require('../api_functions/update_account_data');
+const updateInstitutionBalance = require('../api_functions/update_institution_data');
 const router = express.Router();
 const pool = require('../config/db_config');
 
@@ -54,7 +56,48 @@ router.put('/:insId', async (req, res) => {
 router.delete('/:insId', async (req, res) => {
     try {
         const { insId } = req.params;
+
+        // get all account id assoc with institution
+        // loop through looking for transfer transactions belonging to account
+        // get other transfer account ids
+        // update those account and institution balances
+        const creditedAccountIdData = await pool.query('SELECT credited_account_id FROM transactions JOIN accounts ON debited_account_id = account_id WHERE ins_id = $1 AND credited_account_id IS NOT NULL', [insId]);
+        const debitedAccountIdData = await pool.query('SELECT debited_account_id FROM transactions JOIN accounts ON credited_account_id = account_id WHERE ins_id = $1 AND debited_account_id IS NOT NULL', [insId]);
+
+        const creditedAccountIds = creditedAccountIdData.rows.map((account) => {
+            return account.credited_account_id;
+        });
+        const debitedAccountIds = debitedAccountIdData.rows.map((account) => {
+            return account.debited_account_id;
+        });
+
+        let condensedCreditedAccountIds = [];
+        for (let i = 0; i < creditedAccountIds.length; i++) {
+            if (!condensedCreditedAccountIds.includes(creditedAccountIds[i])) {
+                condensedCreditedAccountIds.push(creditedAccountIds[i]);
+            }
+        }
+        let condensedDebitedAccountIds = [];
+        for (let i = 0; i < debitedAccountIds.length; i++) {
+            if (!condensedDebitedAccountIds.includes(debitedAccountIds[i])) {
+                condensedDebitedAccountIds.push(debitedAccountIds[i]);
+            }
+        }
+
+        console.log(condensedCreditedAccountIds);
+        console.log(condensedDebitedAccountIds);
+
         const deleteInstitution = await pool.query('DELETE FROM institutions WHERE ins_id = $1', [insId]);
+
+        // Update other accounts and institutions affected by deleting related transactions (have both credited and debited account ids)
+        condensedCreditedAccountIds.forEach(async (accountId) => {
+            await updateAccountBalance(accountId);
+            await updateInstitutionBalance(accountId);
+        });
+        condensedDebitedAccountIds.forEach(async (accountId) => {
+            await updateAccountBalance(accountId);
+            await updateInstitutionBalance(accountId);
+        });
 
         res.json(`Institution with ins_id = ${insId} was deleted`);
     } catch (error) {
