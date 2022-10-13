@@ -1,5 +1,7 @@
 // Dependencies -----
 const express = require('express');
+const updateAccountBalance = require('../api_functions/update_account_data');
+const updateInstitutionBalance = require('../api_functions/update_institution_data');
 const router = express.Router();
 const pool = require('../config/db_config');
 
@@ -34,23 +36,36 @@ router.post('/', async (req, res) => {
             date,
             description,
             amount,
-            trans_type,
+            transType,
             category,
-            sub_category,
-            credited_account_id,
-            debited_account_id,
-            user_id } = req.body;
+            subCategory,
+            creditedAccountId,
+            debitedAccountId,
+            userId } = req.body;
+
+        // Create new transaction
         const newTransaction = await pool.query('INSERT INTO transactions (date, description, amount, trans_type, category, sub_category, credited_account_id, debited_account_id, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *', [
             date,
             description,
             amount,
-            trans_type,
+            transType,
             category,
-            sub_category,
-            credited_account_id,
-            debited_account_id,
-            user_id
+            subCategory,
+            creditedAccountId,
+            debitedAccountId,
+            userId
         ]);
+
+        // Update Account balance and Institution balance
+        if (creditedAccountId) {
+            updateAccountBalance(creditedAccountId);
+            updateInstitutionBalance(creditedAccountId);
+        }
+
+        if (debitedAccountId) {
+            updateAccountBalance(debitedAccountId);
+            updateInstitutionBalance(debitedAccountId);
+        }
 
         res.json(newTransaction.rows[0]);
     } catch (error) {
@@ -65,24 +80,37 @@ router.put('/:transId', async (req, res) => {
             date,
             description,
             amount,
-            trans_type,
+            transType,
             category,
-            sub_category,
-            credited_account_id,
-            debited_account_id,
-            user_id } = req.body;
+            subCategory,
+            creditedAccountId,
+            debitedAccountId,
+            userId } = req.body;
+        
+        // Update transaction
         const updateTransaction = await pool.query('UPDATE transactions SET date = $1, description = $2, amount = $3, trans_type = $4, category = $5, sub_category = $6, credited_account_id = $7, debited_account_id = $8, user_id = $9 WHERE trans_id = $10', [
             date,
             description,
             amount,
-            trans_type,
+            transType,
             category,
-            sub_category,
-            credited_account_id,
-            debited_account_id,
-            user_id,
+            subCategory,
+            creditedAccountId,
+            debitedAccountId,
+            userId,
             transId
         ]);
+
+        // Update Account balance and Institution balance
+        if (creditedAccountId) {
+            updateAccountBalance(creditedAccountId);
+            updateInstitutionBalance(creditedAccountId);
+        }
+
+        if (debitedAccountId) {
+            updateAccountBalance(debitedAccountId);
+            updateInstitutionBalance(debitedAccountId);
+        }
 
         res.json(`Transaction with trans_id = ${transId} was updated`);
     } catch (error) {
@@ -93,6 +121,23 @@ router.put('/:transId', async (req, res) => {
 router.delete('/:transId', async (req, res) => {
     try {
         const { transId } = req.params;
+        
+        const creditedAccountIdData = await pool.query('SELECT (credited_account_id) FROM transactions WHERE trans_id = $1', [transId]);
+        const creditedAccountId = creditedAccountIdData.rows[0].credited_account_id;
+        const debitedAccountIdData = await pool.query('SELECT (debited_account_id) FROM transactions WHERE trans_id = $1', [transId]);
+        const debitedAccountId = debitedAccountIdData.rows[0].debited_account_id;
+
+        // Update Account balance and Institution balance
+        if (creditedAccountId) {
+            updateAccountBalance(creditedAccountId);
+            updateInstitutionBalance(creditedAccountId);
+        }
+        
+        if (debitedAccountId) {
+            updateAccountBalance(debitedAccountId);
+            updateInstitutionBalance(debitedAccountId);
+        }
+                
         const deleteTransaction = await pool.query('DELETE FROM transactions WHERE trans_id = $1', [transId]);
 
         res.json(`Transaction with trans_id = ${transId} was deleted`);
