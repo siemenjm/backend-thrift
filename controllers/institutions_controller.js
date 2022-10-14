@@ -23,8 +23,14 @@ router.get('/:insId', async (req, res) => {
     try {
         const { insId } = req.params;
         const thisInstitution = await pool.query('SELECT * FROM institutions WHERE ins_id = $1', [insId]);
+        const relatedAccounts = await pool.query('SELECT * FROM accounts WHERE ins_id = $1', [insId]);
 
-        res.json(thisInstitution.rows[0]);
+        const data = {
+            institution: thisInstitution.rows[0], 
+            accounts: relatedAccounts.rows
+        };
+
+        res.json(data);
     } catch (error) {
         console.error(error.message);
     }
