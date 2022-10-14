@@ -80,36 +80,34 @@ router.put('/:transId', async (req, res) => {
             date,
             description,
             amount,
-            transType,
+            trans_type,
             category,
-            subCategory,
-            creditedAccountId,
-            debitedAccountId,
-            userId } = req.body;
+            sub_category,
+            credited_account_id,
+            debited_account_id } = req.body;
         
         // Update transaction
-        const updateTransaction = await pool.query('UPDATE transactions SET date = $1, description = $2, amount = $3, trans_type = $4, category = $5, sub_category = $6, credited_account_id = $7, debited_account_id = $8, user_id = $9 WHERE trans_id = $10', [
+        const updateTransaction = await pool.query('UPDATE transactions SET date = $1, description = $2, amount = $3, trans_type = $4, category = $5, sub_category = $6, credited_account_id = $7, debited_account_id = $8 WHERE trans_id = $9', [
             date,
             description,
             amount,
-            transType,
+            trans_type,
             category,
-            subCategory,
-            creditedAccountId,
-            debitedAccountId,
-            userId,
+            sub_category,
+            credited_account_id,
+            debited_account_id,
             transId
         ]);
 
         // Update Account balance and Institution balance
-        if (creditedAccountId) {
-            await updateAccountBalance(creditedAccountId);
-            await updateInstitutionBalance(creditedAccountId);
+        if (credited_account_id) {
+            await updateAccountBalance(credited_account_id);
+            await updateInstitutionBalance(credited_account_id);
         }
 
-        if (debitedAccountId) {
-            await updateAccountBalance(debitedAccountId);
-            await updateInstitutionBalance(debitedAccountId);
+        if (debited_account_id) {
+            await updateAccountBalance(debited_account_id);
+            await updateInstitutionBalance(debited_account_id);
         }
 
         res.json(`Transaction with trans_id = ${transId} was updated`);
