@@ -57,12 +57,12 @@ router.post('/', async (req, res) => {
 router.put('/:accountId', async (req, res) => {
     try {
         const { accountId } = req.params;
-        const { name, startingBalance, accountType, insId, userId } = req.body;
-        const updatedAccount = await pool.query('UPDATE accounts SET name = $1, starting_balance = $2, account_type = $3, ins_id = $4, user_id = $5 WHERE account_id = $6', [name, startingBalance, accountType, insId, userId, accountId]);
-
+        const { name, starting_balance, account_type, ins_id } = req.body;
+        const updatedAccount = await pool.query('UPDATE accounts SET name = $1, starting_balance = $2, account_type = $3, ins_id = $4 WHERE account_id = $5', [name, starting_balance, account_type, ins_id, accountId]);
+        
         // Update Account current_balance and Institution balance to include starting_balance before responding
-        await updateAccountBalance(updatedAccount.rows[0].account_id);
-        await updateInstitutionBalance(updatedAccount.rows[0].account_id);
+        await updateAccountBalance(accountId);
+        await updateInstitutionBalance(accountId);
         
         res.json(`Account with account_id = ${accountId} was updated`);
     } catch (error) {
