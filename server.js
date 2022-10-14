@@ -4,69 +4,21 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const pool = require('./database/db_config');
+const morgan = require('morgan');
 
+const controllers = require('./controllers');
 const { PORT } = process.env;
 
 // Middleware -----
 app.use(express.json());
 app.use(cors());
+app.use(morgan('dev'));
 
-// Routes -----
-app.get('/institutions', async (req, res) => {
-    try {
-        const allInstitutions = await pool.query('SELECT * FROM institution');
-
-        res.json(allInstitutions.rows);
-    } catch (error) {
-        console.error(error.message);
-    }
-});
-
-app.get('/institutions/:insId', async (req, res) => {
-    try {
-        const { insId } = req.params;
-        const thisInstitution = await pool.query('SELECT * FROM institution WHERE ins_id = $1', [insId]);
-
-        res.json(thisInstitution.rows[0]);
-    } catch (error) {
-        console.error(error.message);
-    }
-});
-
-app.post('/institutions', async (req, res) => {
-    try {
-        const { name, logo } = req.body;
-        const newInstitution = await pool.query('INSERT INTO institution (name, logo) VALUES ($1, $2) RETURNING *', [name, logo]);
-
-        res.json(newInstitution.rows[0]);
-    } catch (error) {
-        console.error(error.message);
-    }
-});
-
-app.put('/institutions/:insId', async (req, res) => {
-    try {
-        const { insId } = req.params;
-        const { name, logo } = req.body;
-        const updateInstitution = await pool.query('UPDATE institution SET name = $1, logo = $2 WHERE ins_id = $3', [name, logo, insId]);
-
-        res.json(`Institution with ins_id = ${insId} was updated`);
-    } catch (error) {
-        console.error(error.message);
-    }
-});
-
-app.delete('/institutions/:insId', async (req, res) => {
-    try {
-        const { insId } = req.params;
-        const deleteInstitution = await pool.query('DELETE FROM institution WHERE ins_id = $1', [insId]);
-
-        res.json(`Institution with ins_id = ${insId} was deleted`);
-    } catch (error) {
-        console.error(error.message);
-    }
-});
+// Routers -----
+app.use('/users', controllers.users);
+app.use('/institutions', controllers.institutions);
+app.use('/accounts', controllers.accounts);
+app.use('/transactions', controllers.transactions);
 
 // Listener -----
 app.listen(PORT, () => {
