@@ -50,8 +50,8 @@ router.post('/', async (req, res) => {
 router.put('/:insId', async (req, res) => {
     try {
         const { insId } = req.params;
-        const { name, logo, userId } = req.body;
-        const updateInstitution = await pool.query('UPDATE institutions SET name = $1, logo = $2, user_id = $3 WHERE ins_id = $4', [name, logo, userId, insId]);
+        const { name, logo } = req.body;
+        const updateInstitution = await pool.query('UPDATE institutions SET name = $1, logo = $2 WHERE ins_id = $3', [name, logo, insId]);
 
         res.json(`Institution with ins_id = ${insId} was updated`);
     } catch (error) {
