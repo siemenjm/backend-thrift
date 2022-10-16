@@ -23,7 +23,7 @@ router.get('/:insId', async (req, res) => {
     try {
         const { insId } = req.params;
         const thisInstitution = await pool.query('SELECT * FROM institutions WHERE ins_id = $1', [insId]);
-        const relatedAccounts = await pool.query('SELECT * FROM accounts WHERE ins_id = $1', [insId]);
+        const relatedAccounts = await pool.query('SELECT * FROM accounts WHERE ins_id = $1 ORDER BY name ASC', [insId]);
 
         const data = {
             institution: thisInstitution.rows[0], 
