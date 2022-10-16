@@ -11,7 +11,7 @@ router.use(express.json());
 // Routes -----
 router.get('/', async (req, res) => {
     try {
-        const allInstitutions = await pool.query('SELECT * FROM institutions');
+        const allInstitutions = await pool.query('SELECT * FROM institutions ORDER BY name ASC');
 
         res.json(allInstitutions.rows);
     } catch (error) {
