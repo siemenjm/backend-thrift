@@ -11,7 +11,7 @@ router.use(express.json());
 // Routes -----
 router.get('/', async (req, res) => {
     try {
-        const allAccounts = await pool.query('SELECT * FROM accounts');
+        const allAccounts = await pool.query('SELECT * FROM accounts ORDER BY name ASC');
 
         res.json(allAccounts.rows);
     } catch (error) {
@@ -24,13 +24,11 @@ router.get('/:accountId', async (req, res) => {
         const { accountId } = req.params;
         const thisAccount = await pool.query('SELECT * FROM accounts WHERE account_id = $1', [accountId]);
         
-        const creditedTransactions = await pool.query('SELECT * FROM transactions WHERE credited_account_id = $1', [accountId]);
-        const debitedTransactions = await pool.query('SELECT * FROM transactions WHERE debited_account_id = $1', [accountId]);
-        const relatedTransactions = creditedTransactions.rows.concat(debitedTransactions.rows);
+        const relatedTransactions = await pool.query('SELECT * FROM transactions WHERE credited_account_id = $1 OR debited_account_id = $1 ORDER BY date ASC', [accountId]);
 
         const data = {
             account: thisAccount.rows[0],
-            transactions: relatedTransactions
+            transactions: relatedTransactions.rows
         };
 
         res.json(data);

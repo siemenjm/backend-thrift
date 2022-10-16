@@ -20,6 +20,15 @@ app.use('/institutions', controllers.institutions);
 app.use('/accounts', controllers.accounts);
 app.use('/transactions', controllers.transactions);
 
+// Test route -----
+app.get('/', async (req, res) => {
+    try {
+        res.send('Hello World');
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
 // Listener -----
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
