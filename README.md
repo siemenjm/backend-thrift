@@ -8,7 +8,7 @@ Thrift is a money-tracking web application built using the PERN stack (PostgreSQ
 
 [Thrift - Netlify Deployment](https://thrift-financial.netlify.app/)
 
-[Thrift - Heroku Deployment](https://backend-thrift.herokuapp.com/)
+[Thrift - Fly.io Deployment](https://thrift.fly.dev/)
 
 <img src="./readme_screenshots/home_screen.png" alt="Home Page">
 
